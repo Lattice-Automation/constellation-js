@@ -25,11 +25,6 @@ app.use(function(req, res, next) {
 app.use(express.static(__dirname + "/demos/static"));
 app.use(express.static(__dirname + "/lib/"));
 
-// const server = app.listen(8082, function() {
-//   console.log("Listening on port %d", server.address().port);
-//   console.log("http://localhost:8082/");
-// });
-
 app.get("/", function(req, res) {
   res.sendFile(path.join(__dirname + "/demos/static/client.html"));
 });
@@ -79,35 +74,6 @@ app.post("/importSBOL", xmlparser(), async function(req, res) {
     console.log(error);
     res.status(500).send(String(error));
   }
-});
-
-app.post("/sendToKnox", function(req, res) {
-  let form = new FormData();
-  let sbolDocs = JSON.parse(req.body["sbolDocs[]"]);
-
-  for (let sbol of sbolDocs) {
-    let stream = new Readable();
-    stream.push(sbol);
-    stream.push(null);
-    form.append("inputSBOLFiles[]", stream, {
-      filename: "test.xml",
-      contentType: "application/xml",
-      knownLength: sbol.length
-    }); //extra fields necessary
-  }
-  form.append("outputSpaceID", req.body.designName);
-
-  form.submit("http://localhost:8080/sbol/importCombinatorial", function(
-    error,
-    result
-  ) {
-    if (error) {
-      console.log("Error!");
-      res.status(405).send(String(error));
-    } else {
-      res.status(200).send(String(result));
-    }
-  });
 });
 
 module.exports.handler = sls(app);

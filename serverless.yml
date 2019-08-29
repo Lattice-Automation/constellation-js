@@ -17,6 +17,14 @@ functions:
           method: ANY
           cors: true
       - http:
+          path: /postSpecs
+          method: POST
+          cors: true
+      - http:
+          path: /importSBOL
+          method: POST
+          cors: true
+      - http:
           path: /{proxy+}
           method: ANY
           cors: false
